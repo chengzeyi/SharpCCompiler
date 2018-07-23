@@ -35,7 +35,6 @@ namespace SharpCCompiler
         static LexAnalyzer()
         {
             KeywordList.Add("int");
-            KeywordList.Add("char");
             KeywordList.Add("if");
             KeywordList.Add("else");
             KeywordList.Add("while");
@@ -63,12 +62,10 @@ namespace SharpCCompiler
             MatchList.Add(new Tuple<Match, string>(MatchSingleLineComment, SymbolType.SingleLineComment));
             MatchList.Add(new Tuple<Match, string>(MatchKeyword, SymbolType.Keyword));
             MatchList.Add(new Tuple<Match, string>(MatchIdentifier, SymbolType.Identifier));
-            MatchList.Add(new Tuple<Match, string>(MatchCharConst, SymbolType.CharConst));
             MatchList.Add(new Tuple<Match, string>(MatchStringConst, SymbolType.StringConst));
             MatchList.Add(new Tuple<Match, string>(MatchIntConst, SymbolType.IntConst));
             MatchList.Add(new Tuple<Match, string>(MatchBoundary, SymbolType.Boundary));
             MatchList.Add(new Tuple<Match, string>(MatchOperator, SymbolType.Operator));
-            MatchList.Add(new Tuple<Match, string>(MatchIncomCharConstant, SymbolType.IncomCharConst));
             MatchList.Add(new Tuple<Match, string>(MatchIncomStringConst, SymbolType.IncomStringConst));
         }
 
@@ -118,10 +115,6 @@ namespace SharpCCompiler
                     {
                         value = ParseIntConst(word.Value, word.Line);
                     }
-                    else if (word.Type.Equals(SymbolType.CharConst))
-                    {
-                        value = ParseCharConst(word.Value, word.Line);
-                    }
                     else if (word.Type.Equals(SymbolType.StringConst))
                     {
                         value = ParseStringConst(word.Value, word.Line);
@@ -152,27 +145,6 @@ namespace SharpCCompiler
             }
 
             throw new LexAnalyzerError(line, LexAnalyzerError.IntConst, value);
-        }
-
-        private static string ParseCharConst(string value, int line)
-        {
-            if (value.Length == 3)
-            {
-                return value[1].ToString();
-            }
-            else if (value.Length == 4 && value[1] == '\\')
-            {
-                switch (value[2])
-                {
-                    case '\'': return "\'";
-                    case 't': return "\t";
-                    case 'n': return "\n";
-                    case 'r': return "\r";
-                    case 'b': return "\b";
-                }
-            }
-
-            throw new LexAnalyzerError(line, LexAnalyzerError.CharConst, value);
         }
 
         private static string ParseStringConst(string value, int line)
@@ -223,17 +195,7 @@ namespace SharpCCompiler
                 bool isValid = true;
                 try
                 {
-                    if (matchResult.Item2.Equals(SymbolType.End))
-                    {
-                        lexAnalyzerErrorCount++;
-                        throw new LexAnalyzerError(line, LexAnalyzerError.End, value);
-                    }
-                    else if (matchResult.Item2.Equals(SymbolType.IncomCharConst))
-                    {
-                        lexAnalyzerErrorCount++;
-                        throw new LexAnalyzerError(line, LexAnalyzerError.IncomCharConst, value);
-                    }
-                    else if (matchResult.Item2.Equals(SymbolType.IncomStringConst))
+                    if (matchResult.Item2.Equals(SymbolType.IncomStringConst))
                     {
                         lexAnalyzerErrorCount++;
                         throw new LexAnalyzerError(line, LexAnalyzerError.IncomStringConst, value);
@@ -241,7 +203,7 @@ namespace SharpCCompiler
                     else if (matchResult.Item2.Equals(SymbolType.Unknown))
                     {
                         lexAnalyzerErrorCount++;
-                        throw new LexAnalyzerError(line, SymbolType.IncomStringConst, value);
+                        throw new LexAnalyzerError(line, SymbolType.Unknown, value);
                     }
                 }
                 catch (LexAnalyzerError e)
@@ -351,35 +313,6 @@ namespace SharpCCompiler
             }
 
             return count;
-        }
-
-        private static int MatchCharConst(string lineRemain)
-        {
-            if (lineRemain.First() != '\'')
-            {
-                return 0;
-            }
-
-            int count = 1;
-            bool flag = true;
-            foreach (var c in lineRemain.Substring(1))
-            {
-                count++;
-                if (c == '\\')
-                {
-                    flag = false;
-                }
-                else
-                {
-                    if (c == '\'' && flag)
-                    {
-                        return count;
-                    }
-                    flag = true;
-                }
-            }
-
-            return 0;
         }
 
         private static int MatchIncomCharConstant(string lineRemain)

@@ -195,20 +195,6 @@ namespace SharpCCompiler
             }
         }
 
-        private SyntaxTreeNode CreateCharConst(ref List<Token>.Enumerator enumerator)
-        {
-            List<Token>.Enumerator initialEnumerator = enumerator;
-            if (enumerator.MoveNext() && enumerator.Current.Type.Equals(SymbolType.CharConst))
-            {
-                return new SyntaxTreeNode(enumerator.Current.Line, SyntaxType.CharConst, enumerator.Current.Value);
-            }
-            else
-            {
-                enumerator = initialEnumerator;
-                return null;
-            }
-        }
-
         private SyntaxTreeNode CreateStringConst(ref List<Token>.Enumerator enumerator)
         {
             List<Token>.Enumerator initialEnumerator = enumerator;
@@ -326,13 +312,13 @@ namespace SharpCCompiler
             List<Token>.Enumerator initialEnumerator = enumerator;
             List<SyntaxTreeNode> childList = new List<SyntaxTreeNode>();
             SyntaxTreeNode node;
-            if (JudgeAndAssign(out node, CreateIntConst(ref enumerator)) || JudgeAndAssign(out node, CreateCharConst(ref enumerator)) || JudgeAndAssign(out node, CreateIdentifier(ref enumerator)))
+            if (JudgeAndAssign(out node, CreateIntConst(ref enumerator)) || JudgeAndAssign(out node, CreateIdentifier(ref enumerator)))
             {
                 childList.Add(node);
                 if (JudgeAndAssign(out node, CreateAddOperator(ref enumerator)))
                 {
                     childList.Add(node);
-                    if (JudgeAndAssign(out node, CreateIntConst(ref enumerator)) || JudgeAndAssign(out node, CreateCharConst(ref enumerator)) || JudgeAndAssign(out node, CreateIdentifier(ref enumerator)))
+                    if (JudgeAndAssign(out node, CreateIntConst(ref enumerator)) || JudgeAndAssign(out node, CreateIdentifier(ref enumerator)))
                     {
                         childList.Add(node);
                         return new SyntaxTreeNode(enumerator.Current.Line, SyntaxType.AddExpression){ChildList = childList};
@@ -349,13 +335,13 @@ namespace SharpCCompiler
             List<Token>.Enumerator initialEnumerator = enumerator;
             List<SyntaxTreeNode> childList = new List<SyntaxTreeNode>();
             SyntaxTreeNode node;
-            if (JudgeAndAssign(out node, CreateIntConst(ref enumerator)) || JudgeAndAssign(out node, CreateCharConst(ref enumerator)) || JudgeAndAssign(out node, CreateIdentifier(ref enumerator)))
+            if (JudgeAndAssign(out node, CreateIntConst(ref enumerator)) || JudgeAndAssign(out node, CreateIdentifier(ref enumerator)))
             {
                 childList.Add(node);
                 if (JudgeAndAssign(out node, CreateSubtractionOperator(ref enumerator)))
                 {
                     childList.Add(node);
-                    if (JudgeAndAssign(out node, CreateIntConst(ref enumerator)) || JudgeAndAssign(out node, CreateCharConst(ref enumerator)) || JudgeAndAssign(out node, CreateIdentifier(ref enumerator)))
+                    if (JudgeAndAssign(out node, CreateIntConst(ref enumerator)) || JudgeAndAssign(out node, CreateIdentifier(ref enumerator)))
                     {
                         childList.Add(node);
                         return new SyntaxTreeNode(enumerator.Current.Line, SyntaxType.SubtractionExprssion) { ChildList = childList };
@@ -372,13 +358,13 @@ namespace SharpCCompiler
             List<Token>.Enumerator initialEnumerator = enumerator;
             List<SyntaxTreeNode> childList = new List<SyntaxTreeNode>();
             SyntaxTreeNode node;
-            if (JudgeAndAssign(out node, CreateIntConst(ref enumerator)) || JudgeAndAssign(out node, CreateCharConst(ref enumerator)) || JudgeAndAssign(out node, CreateIdentifier(ref enumerator)))
+            if (JudgeAndAssign(out node, CreateIntConst(ref enumerator)) || JudgeAndAssign(out node, CreateIdentifier(ref enumerator)))
             {
                 childList.Add(node);
                 if (JudgeAndAssign(out node, CreateLessThanOperator(ref enumerator)))
                 {
                     childList.Add(node);
-                    if (JudgeAndAssign(out node, CreateIntConst(ref enumerator)) || JudgeAndAssign(out node, CreateCharConst(ref enumerator)) || JudgeAndAssign(out node, CreateIdentifier(ref enumerator)))
+                    if (JudgeAndAssign(out node, CreateIntConst(ref enumerator)) || JudgeAndAssign(out node, CreateIdentifier(ref enumerator)))
                     {
                         childList.Add(node);
                         return new SyntaxTreeNode(enumerator.Current.Line, SyntaxType.LessThanExpression) { ChildList = childList };
@@ -395,13 +381,13 @@ namespace SharpCCompiler
             List<Token>.Enumerator initialEnumerator = enumerator;
             List<SyntaxTreeNode> childList = new List<SyntaxTreeNode>();
             SyntaxTreeNode node;
-            if (JudgeAndAssign(out node, CreateIntConst(ref enumerator)) || JudgeAndAssign(out node, CreateCharConst(ref enumerator)) || JudgeAndAssign(out node, CreateIdentifier(ref enumerator)))
+            if (JudgeAndAssign(out node, CreateIntConst(ref enumerator)) || JudgeAndAssign(out node, CreateIdentifier(ref enumerator)))
             {
                 childList.Add(node);
                 if (JudgeAndAssign(out node, CreateGreaterThanOperator(ref enumerator)))
                 {
                     childList.Add(node);
-                    if (JudgeAndAssign(out node, CreateIntConst(ref enumerator)) || JudgeAndAssign(out node, CreateCharConst(ref enumerator)) || JudgeAndAssign(out node, CreateIdentifier(ref enumerator)))
+                    if (JudgeAndAssign(out node, CreateIntConst(ref enumerator)) || JudgeAndAssign(out node, CreateIdentifier(ref enumerator)))
                     {
                         childList.Add(node);
                         return new SyntaxTreeNode(enumerator.Current.Line, SyntaxType.GreaterThanExpression) { ChildList = childList };
@@ -418,13 +404,13 @@ namespace SharpCCompiler
             List<Token>.Enumerator initialEnumerator = enumerator;
             List<SyntaxTreeNode> childList = new List<SyntaxTreeNode>();
             SyntaxTreeNode node;
-            if (JudgeAndAssign(out node, CreateIntConst(ref enumerator)) || JudgeAndAssign(out node, CreateCharConst(ref enumerator)) || JudgeAndAssign(out node, CreateIdentifier(ref enumerator)))
+            if (JudgeAndAssign(out node, CreateIntConst(ref enumerator)) || JudgeAndAssign(out node, CreateIdentifier(ref enumerator)))
             {
                 childList.Add(node);
                 if (JudgeAndAssign(out node, CreateEqualOperator(ref enumerator)))
                 {
                     childList.Add(node);
-                    if (JudgeAndAssign(out node, CreateIntConst(ref enumerator)) || JudgeAndAssign(out node, CreateCharConst(ref enumerator)) || JudgeAndAssign(out node, CreateIdentifier(ref enumerator)))
+                    if (JudgeAndAssign(out node, CreateIntConst(ref enumerator)) || JudgeAndAssign(out node, CreateIdentifier(ref enumerator)))
                     {
                         childList.Add(node);
                         return new SyntaxTreeNode(enumerator.Current.Line, SyntaxType.EqualExpression) { ChildList = childList };
@@ -441,13 +427,13 @@ namespace SharpCCompiler
             List<Token>.Enumerator initialEnumerator = enumerator;
             List<SyntaxTreeNode> childList = new List<SyntaxTreeNode>();
             SyntaxTreeNode node;
-            if (JudgeAndAssign(out node, CreateIntConst(ref enumerator)) || JudgeAndAssign(out node, CreateCharConst(ref enumerator)) || JudgeAndAssign(out node, CreateIdentifier(ref enumerator)))
+            if (JudgeAndAssign(out node, CreateIntConst(ref enumerator)) || JudgeAndAssign(out node, CreateIdentifier(ref enumerator)))
             {
                 childList.Add(node);
                 if (JudgeAndAssign(out node, CreateNotEqualOperator(ref enumerator)))
                 {
                     childList.Add(node);
-                    if (JudgeAndAssign(out node, CreateIntConst(ref enumerator)) || JudgeAndAssign(out node, CreateCharConst(ref enumerator)) || JudgeAndAssign(out node, CreateIdentifier(ref enumerator)))
+                    if (JudgeAndAssign(out node, CreateIntConst(ref enumerator)) || JudgeAndAssign(out node, CreateIdentifier(ref enumerator)))
                     {
                         childList.Add(node);
                         return new SyntaxTreeNode(enumerator.Current.Line, SyntaxType.NotEqualExpression) { ChildList = childList };
@@ -470,7 +456,7 @@ namespace SharpCCompiler
                 if (JudgeAndAssign(out node, CreateAssignmentOperator(ref enumerator)))
                 {
                     childList.Add(node);
-                    if (JudgeAndAssign(out node, CreateExpression(ref enumerator)) || JudgeAndAssign(out node, CreateIntConst(ref enumerator)) || JudgeAndAssign(out node, CreateCharConst(ref enumerator)) || JudgeAndAssign(out node, CreateIdentifier(ref enumerator)))
+                    if (JudgeAndAssign(out node, CreateExpression(ref enumerator)) || JudgeAndAssign(out node, CreateIntConst(ref enumerator)) || JudgeAndAssign(out node, CreateIdentifier(ref enumerator)))
                     {
                         childList.Add(node);
                         return new SyntaxTreeNode(enumerator.Current.Line, SyntaxType.AssignmentExpression) { ChildList = childList };
@@ -487,7 +473,7 @@ namespace SharpCCompiler
             List<Token>.Enumerator initialEnumerator = enumerator;
             List<SyntaxTreeNode> childList = new List<SyntaxTreeNode>();
             SyntaxTreeNode node;
-            if (JudgeAndAssign(out node, CreateAssignmentExpression(ref enumerator)) || JudgeAndAssign(out node, CreateAddExpression(ref enumerator)) || JudgeAndAssign(out node, CreateSubtractionExpression(ref enumerator)) || JudgeAndAssign(out node, CreateLessThanExpression(ref enumerator)) || JudgeAndAssign(out node, CreateGreaterThanExpression(ref enumerator)) || JudgeAndAssign(out node, CreateEqualExpression(ref enumerator)) || JudgeAndAssign(out node, CreateNotEqualExpression(ref enumerator)) || JudgeAndAssign(out node, CreateIntConst(ref enumerator)) || JudgeAndAssign(out node, CreateCharConst(ref enumerator)) || JudgeAndAssign(out node, CreateIdentifier(ref enumerator)))
+            if (JudgeAndAssign(out node, CreateAssignmentExpression(ref enumerator)) || JudgeAndAssign(out node, CreateAddExpression(ref enumerator)) || JudgeAndAssign(out node, CreateSubtractionExpression(ref enumerator)) || JudgeAndAssign(out node, CreateLessThanExpression(ref enumerator)) || JudgeAndAssign(out node, CreateGreaterThanExpression(ref enumerator)) || JudgeAndAssign(out node, CreateEqualExpression(ref enumerator)) || JudgeAndAssign(out node, CreateNotEqualExpression(ref enumerator)) || JudgeAndAssign(out node, CreateIntConst(ref enumerator)) || JudgeAndAssign(out node, CreateIdentifier(ref enumerator)))
             {
                 childList.Add(node);
                 return new SyntaxTreeNode(enumerator.Current.Line, SyntaxType.Expression){ChildList = childList};
@@ -624,7 +610,7 @@ namespace SharpCCompiler
             {
                 if (MatchLeftParenthese(ref enumerator))
                 {
-                    if (JudgeAndAssign(out node, CreateIdentifier(ref enumerator)) || JudgeAndAssign(out node, CreateCharConst(ref e)))
+                    if (JudgeAndAssign(out node, CreateIdentifier(ref enumerator)) || JudgeAndAssign(out node, CreateStringConst(ref enumerator)))
                     {
                         childList.Add(node);
                         if (MatchRightParenthese(ref enumerator))
