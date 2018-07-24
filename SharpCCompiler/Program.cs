@@ -6,7 +6,7 @@ namespace SharpCCompiler
     {
         static void Main(string[] args)
         {
-            LexAnalyzer.Test();
+            Parser.Test();
             Console.WriteLine("Press any key to continue.");
             Console.ReadKey();
         }

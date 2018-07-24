@@ -7,18 +7,70 @@ namespace SharpCCompiler
 {
     class Parser
     {
-        private List<Token> tokenList = new List<Token>();
-        private int nodeCount = 0;
-        private int textErrorCount = 0;
+        private List<Token> tokenList;
+        private SyntaxTreeNode root = null;
+        private ParserError parserError = null;
         private bool hasError = false;
-
         public bool HasError => hasError;
+
+        public static void Test()
+        {
+            Console.WriteLine("Parser test started!");
+            string source =
+                "// This is a comment.\n" +
+                "int integer;\n" +
+                "output(\"Hello! Please enter an integer: \");\n" +
+                "input(integer);\n" +
+                "if(integer > 100)\n" +
+                "\tinteger = integer + 1;\n" +
+                "else\n" +
+                "\tinteger = integer - 1;\n" +
+                "output(\"The result is: \");\n" +
+                "output(integer);\n" +
+                "output(\".\\n\");\n";
+            Console.WriteLine("Source code is:");
+            Console.WriteLine(source);
+            LexAnalyzer lexAnalyzer = new LexAnalyzer(source);
+            if (!lexAnalyzer.HasError)
+            {
+                Parser parser = new Parser(lexAnalyzer.RetrieveTokenList());
+            }
+            Console.WriteLine("Parser test finished!");
+        }
+
+        public Parser(List<Token> tokenList)
+        {
+            this.tokenList = tokenList;
+            ParseTokenList();
+            if (hasError)
+            {
+                Printer.PrintParserError(parserError);
+            }
+
+            if (root != null)
+            {
+                Printer.PrintSyntaxTree(root);
+            }
+        }
+
+        public SyntaxTreeNode RetrieveSyntaxTree()
+        {
+            return root;
+        }
 
         private void ParseTokenList()
         {
-            using (List<Token>.Enumerator enumerator = tokenList.GetEnumerator())
+            List<Token>.Enumerator enumerator = tokenList.GetEnumerator();
             {
-
+                try
+                {
+                    root = CreateProgram(ref enumerator);
+                }
+                catch (ParserError e)
+                {
+                    parserError = e;
+                    hasError = true;
+                }
             }
         }
 
@@ -167,6 +219,35 @@ namespace SharpCCompiler
             }
         }
 
+        private SyntaxTreeNode CreateIntSpecifier(ref List<Token>.Enumerator enumerator)
+        {
+            List<Token>.Enumerator initialEnumerator = enumerator;
+            if (enumerator.MoveNext() && enumerator.Current.Type.Equals(SymbolType.Keyword) && enumerator.Current.Value.Equals("int"))
+            {
+                return new SyntaxTreeNode(enumerator.Current.Line, SyntaxType.IntSpecifier, enumerator.Current.Value);
+            }
+            else
+            {
+                enumerator = initialEnumerator;
+                return null;
+            }
+        }
+
+        private SyntaxTreeNode CreateTypeSpecifier(ref List<Token>.Enumerator enumerator)
+        {
+            List<Token>.Enumerator initialEnumerator = enumerator;
+            List<SyntaxTreeNode> childList = new List<SyntaxTreeNode>();
+            SyntaxTreeNode node;
+            if (JudgeAndAssign(out node, CreateIntSpecifier(ref enumerator)))
+            {
+                childList.Add(node);
+                return new SyntaxTreeNode(enumerator.Current.Line, SyntaxType.TypeSpecifier) { ChildList = childList };
+            }
+
+            enumerator = initialEnumerator;
+            return null;
+        }
+
         private SyntaxTreeNode CreateIdentifier(ref List<Token>.Enumerator enumerator)
         {
             List<Token>.Enumerator initialEnumerator = enumerator;
@@ -214,7 +295,7 @@ namespace SharpCCompiler
             List<Token>.Enumerator initialEnumerator = enumerator;
             if (enumerator.MoveNext() && enumerator.Current.Type.Equals(SymbolType.Operator) && enumerator.Current.Value.Equals("="))
             {
-                return new SyntaxTreeNode(enumerator.Current.Line, SyntaxType.AssignmentOperator, enumerator.Current.Value);
+                return new SyntaxTreeNode(enumerator.Current.Line, SyntaxType.AssignmentOperator);
             }
             else
             {
@@ -228,7 +309,7 @@ namespace SharpCCompiler
             List<Token>.Enumerator initialEnumerator = enumerator;
             if (enumerator.MoveNext() && enumerator.Current.Type.Equals(SymbolType.Operator) && enumerator.Current.Value.Equals("+"))
             {
-                return new SyntaxTreeNode(enumerator.Current.Line, SyntaxType.AddOperator, enumerator.Current.Value);
+                return new SyntaxTreeNode(enumerator.Current.Line, SyntaxType.AddOperator);
             }
             else
             {
@@ -240,7 +321,7 @@ namespace SharpCCompiler
         private SyntaxTreeNode CreateSubtractionOperator(ref List<Token>.Enumerator enumerator)
         {
             List<Token>.Enumerator initialEnumerator = enumerator;
-            if (enumerator.MoveNext() && enumerator.Current.Type.Equals(SymbolType.Operator) && enumerator.Current.Value.Equals("-"))
+            if (enumerator.MoveNext() && enumerator.Current.Type.Equals(SymbolType.Operator))
             {
                 return new SyntaxTreeNode(enumerator.Current.Line, SyntaxType.SubtractionOperator, enumerator.Current.Value);
             }
@@ -254,7 +335,7 @@ namespace SharpCCompiler
         private SyntaxTreeNode CreateLessThanOperator(ref List<Token>.Enumerator enumerator)
         {
             List<Token>.Enumerator initialEnumerator = enumerator;
-            if (enumerator.MoveNext() && enumerator.Current.Type.Equals(SymbolType.Operator) && enumerator.Current.Value.Equals("<"))
+            if (enumerator.MoveNext() && enumerator.Current.Type.Equals(SymbolType.Operator))
             {
                 return new SyntaxTreeNode(enumerator.Current.Line, SyntaxType.LessThanOperator, enumerator.Current.Value);
             }
@@ -268,7 +349,7 @@ namespace SharpCCompiler
         private SyntaxTreeNode CreateGreaterThanOperator(ref List<Token>.Enumerator enumerator)
         {
             List<Token>.Enumerator initialEnumerator = enumerator;
-            if (enumerator.MoveNext() && enumerator.Current.Type.Equals(SymbolType.Operator) && enumerator.Current.Value.Equals(">"))
+            if (enumerator.MoveNext() && enumerator.Current.Type.Equals(SymbolType.Operator))
             {
                 return new SyntaxTreeNode(enumerator.Current.Line, SyntaxType.GreaterThanOperator, enumerator.Current.Value);
             }
@@ -282,7 +363,7 @@ namespace SharpCCompiler
         private SyntaxTreeNode CreateEqualOperator(ref List<Token>.Enumerator enumerator)
         {
             List<Token>.Enumerator initialEnumerator = enumerator;
-            if (enumerator.MoveNext() && enumerator.Current.Type.Equals(SymbolType.Operator) && enumerator.Current.Value.Equals("=="))
+            if (enumerator.MoveNext() && enumerator.Current.Type.Equals(SymbolType.Operator))
             {
                 return new SyntaxTreeNode(enumerator.Current.Line, SyntaxType.EqualOperator, enumerator.Current.Value);
             }
@@ -296,7 +377,7 @@ namespace SharpCCompiler
         private SyntaxTreeNode CreateNotEqualOperator(ref List<Token>.Enumerator enumerator)
         {
             List<Token>.Enumerator initialEnumerator = enumerator;
-            if (enumerator.MoveNext() && enumerator.Current.Type.Equals(SymbolType.Operator) && enumerator.Current.Value.Equals("!="))
+            if (enumerator.MoveNext() && enumerator.Current.Type.Equals(SymbolType.Operator))
             {
                 return new SyntaxTreeNode(enumerator.Current.Line, SyntaxType.NotEqualOperator, enumerator.Current.Value);
             }
@@ -483,6 +564,40 @@ namespace SharpCCompiler
             return null;
         }
 
+        private SyntaxTreeNode CreateVariableDeclaration(ref List<Token>.Enumerator enumerator)
+        {
+            List<Token>.Enumerator initialEnumerator = enumerator;
+            List<SyntaxTreeNode> childList = new List<SyntaxTreeNode>();
+            SyntaxTreeNode node;
+            if (JudgeAndAssign(out node, CreateTypeSpecifier(ref enumerator)))
+            {
+                childList.Add(node);
+                if (JudgeAndAssign(out node, CreateIdentifier(ref enumerator)))
+                {
+                    childList.Add(node);
+                    return new SyntaxTreeNode(enumerator.Current.Line, SyntaxType.VariableDeclaration){ChildList = childList};
+                }
+            }
+
+            enumerator = initialEnumerator;
+            return null;
+        }
+
+        private SyntaxTreeNode CreateDeclaration(ref List<Token>.Enumerator enumerator)
+        {
+            List<Token>.Enumerator initialEnumerator = enumerator;
+            List<SyntaxTreeNode> childList = new List<SyntaxTreeNode>();
+            SyntaxTreeNode node;
+            if (JudgeAndAssign(out node, CreateVariableDeclaration(ref enumerator)))
+            {
+                childList.Add(node);
+                return new SyntaxTreeNode(enumerator.Current.Line, SyntaxType.Declaration) {ChildList = childList};
+            }
+
+            enumerator = initialEnumerator;
+            return null;
+        }
+
         private SyntaxTreeNode CreateExpressionStatement(ref List<Token>.Enumerator enumerator)
         {
             List<Token>.Enumerator initialEnumerator = enumerator;
@@ -495,6 +610,19 @@ namespace SharpCCompiler
                 {
                     return new SyntaxTreeNode(enumerator.Current.Line, SyntaxType.ExpressionStatement){ChildList = childList};
                 }
+            }
+
+            enumerator = initialEnumerator;
+            return null;
+        }
+
+        private SyntaxTreeNode CreateNullStatement(ref List<Token>.Enumerator enumerator)
+        {
+            List<Token>.Enumerator initialEnumerator = enumerator;
+            List<SyntaxTreeNode> childList = new List<SyntaxTreeNode>();
+            if (MatchSemicolon(ref enumerator))
+            {
+                return new SyntaxTreeNode(enumerator.Current.Line, SyntaxType.NullStatement);
             }
 
             enumerator = initialEnumerator;
@@ -524,6 +652,11 @@ namespace SharpCCompiler
                         }
                     }
                 }
+
+                if (!ifPassed)
+                {
+                    throw new ParserError(enumerator.Current.Line, ParserError.InvalidIfStatement);
+                }
             }
 
             if (ifPassed)
@@ -540,6 +673,7 @@ namespace SharpCCompiler
                 {
                     return new SyntaxTreeNode(enumerator.Current.Line, SyntaxType.IfStatement){ChildList = childList};
                 }
+                throw new ParserError(enumerator.Current.Line, ParserError.InvalidIfStatement);
             }
 
             enumerator = initialEnumerator;
@@ -568,6 +702,7 @@ namespace SharpCCompiler
                         }
                     }
                 }
+                throw new ParserError(enumerator.Current.Line, ParserError.InvalidWhileStatement);
             }
 
             enumerator = initialEnumerator;
@@ -595,6 +730,7 @@ namespace SharpCCompiler
                         }
                     }
                 }
+                throw new ParserError(enumerator.Current.Line, ParserError.InvalidInputStatement);
             }
 
             enumerator = initialEnumerator;
@@ -606,11 +742,11 @@ namespace SharpCCompiler
             List<Token>.Enumerator initialEnumerator = enumerator;
             List<SyntaxTreeNode> childList = new List<SyntaxTreeNode>();
             SyntaxTreeNode node;
-            if (MatchInput(ref enumerator))
+            if (MatchOutput(ref enumerator))
             {
                 if (MatchLeftParenthese(ref enumerator))
                 {
-                    if (JudgeAndAssign(out node, CreateIdentifier(ref enumerator)) || JudgeAndAssign(out node, CreateStringConst(ref enumerator)))
+                    if (JudgeAndAssign(out node, CreateIdentifier(ref enumerator)) || JudgeAndAssign(out node, CreateStringConst(ref enumerator)) || JudgeAndAssign(out node, CreateIntConst(ref enumerator)))
                     {
                         childList.Add(node);
                         if (MatchRightParenthese(ref enumerator))
@@ -622,10 +758,90 @@ namespace SharpCCompiler
                         }
                     }
                 }
+                throw new ParserError(enumerator.Current.Line, ParserError.InvalidOutputStatement);
             }
 
             enumerator = initialEnumerator;
             return null;
+        }
+
+        private SyntaxTreeNode CreateDeclarationStatement(ref List<Token>.Enumerator enumerator)
+        {
+            List<Token>.Enumerator initialEnumerator = enumerator;
+            List<SyntaxTreeNode> childList = new List<SyntaxTreeNode>();
+            SyntaxTreeNode node;
+            if (JudgeAndAssign(out node, CreateDeclaration(ref enumerator)))
+            {
+                childList.Add(node);
+                if (MatchSemicolon(ref enumerator))
+                {
+                    return new SyntaxTreeNode(enumerator.Current.Line, SyntaxType.DeclarationStatement) { ChildList = childList };
+                }
+            }
+
+            enumerator = initialEnumerator;
+            return null;
+        }
+
+        private SyntaxTreeNode CreateStatement(ref List<Token>.Enumerator enumerator)
+        {
+            List<Token>.Enumerator initialEnumerator = enumerator;
+            List<SyntaxTreeNode> childList = new List<SyntaxTreeNode>();
+            SyntaxTreeNode node;
+            if (JudgeAndAssign(out node, CreateNullStatement(ref enumerator)) || JudgeAndAssign(out node, CreateExpressionStatement(ref enumerator)) || JudgeAndAssign(out node, CreateIfStatement(ref enumerator)) || JudgeAndAssign(out node, CreateWhileStatement(ref enumerator)) || JudgeAndAssign(out node, CreateInputStatement(ref enumerator)) || JudgeAndAssign(out node, CreateOutputStatement(ref enumerator)) || JudgeAndAssign(out node, CreateDeclarationStatement(ref enumerator)) || JudgeAndAssign(out node, CreateCompoundStatement(ref enumerator)))
+            {
+                childList.Add(node);
+                return new SyntaxTreeNode(enumerator.Current.Line, SyntaxType.Statement) {ChildList = childList};
+            }
+
+            enumerator = initialEnumerator;
+            return null;
+        }
+
+        private SyntaxTreeNode CreateCompoundStatement(ref List<Token>.Enumerator enumerator)
+        {
+            List<Token>.Enumerator initialEnumerator = enumerator;
+            List<SyntaxTreeNode> childList = new List<SyntaxTreeNode>();
+            SyntaxTreeNode node;
+            if (MatchLeftBrace(ref enumerator))
+            {
+                while (JudgeAndAssign(out node, CreateStatement(ref enumerator)))
+                {
+                    childList.Add(node);
+                }
+
+                if (MatchRightBrace(ref enumerator))
+                {
+                    return new SyntaxTreeNode(enumerator.Current.Line, SyntaxType.CompoundStatement){ChildList = childList};
+                }
+                throw new ParserError(enumerator.Current.Line, ParserError.InvalidCompoundStatement);
+            }
+
+            enumerator = initialEnumerator;
+            return null;
+        }
+
+        private SyntaxTreeNode CreateProgram(ref List<Token>.Enumerator enumerator)
+        {
+            List<Token>.Enumerator initialEnumerator = enumerator;
+            List<SyntaxTreeNode> childList = new List<SyntaxTreeNode>();
+            SyntaxTreeNode node;
+            while (JudgeAndAssign(out node, CreateStatement(ref enumerator)))
+            {
+                childList.Add(node);
+            }
+
+            List<Token>.Enumerator tmpEnumerator = enumerator;
+            if (enumerator.MoveNext())
+            {
+                throw new ParserError(enumerator.Current.Line, ParserError.UnrecognizedStatement);
+                enumerator = initialEnumerator;
+                return null;
+            }
+            else
+            {
+                return new SyntaxTreeNode(tmpEnumerator.Current.Line, SyntaxType.Program){ChildList = childList};
+            }
         }
     }
 }

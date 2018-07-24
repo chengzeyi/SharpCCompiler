@@ -32,6 +32,27 @@ namespace SharpCCompiler
 
         public bool HasError => hasError;
 
+        public static void Test()
+        {
+            Console.WriteLine("Lexical analyzer test started!");
+            string source =
+                "// This is a comment.\n" +
+                "int integer;\n" +
+                "output(\"Hello! Please enter an integer: \");\n" +
+                "input(integer);\n" +
+                "if(integer > 100)\n" +
+                "\tinteger = integer + 1;\n" +
+                "else\n" +
+                "\tinteger = integer - 1;\n" +
+                "output(\"The result is: \");\n" +
+                "output(integer);\n" +
+                "output(\".\\n\");\n";
+            Console.WriteLine("Source code is:");
+            Console.WriteLine(source);
+            LexAnalyzer lexAnalyzer = new LexAnalyzer(source);
+            Console.WriteLine("Lexical analyzer test finished!");
+        }
+
         static LexAnalyzer()
         {
             KeywordList.Add("int");
@@ -85,17 +106,17 @@ namespace SharpCCompiler
             if (lexAnalyzerErrorCount > 0)
             {
                 hasError = true;
-                Printer.PrintLexAnalyzerErrorList(ref lexAnalyzerErrorList);
+                Printer.PrintLexAnalyzerErrorList(lexAnalyzerErrorList);
             }
 
             if (wordCount > 0)
             {
-                Printer.PrintWordList(ref wordList);
+                Printer.PrintWordList(wordList);
             }
 
             if (tokenCount > 0)
             {
-                Printer.PrintTokenList(ref tokenList);
+                Printer.PrintTokenList(tokenList);
             }
         }
 
@@ -103,7 +124,7 @@ namespace SharpCCompiler
         {
             foreach (var word in wordList)
             {
-                if (!word.IsValid || word.Type == SymbolType.Break)
+                if (!word.IsValid || word.Type.Equals(SymbolType.Break) || word.Type.Equals(SymbolType.SingleLineComment) )
                 {
                     continue;
                 }
@@ -315,35 +336,6 @@ namespace SharpCCompiler
             return count;
         }
 
-        private static int MatchIncomCharConstant(string lineRemain)
-        {
-            if (lineRemain.First() != '\'')
-            {
-                return 0;
-            }
-
-            int count = 1;
-            bool flag = true;
-            foreach (var c in lineRemain.Substring(1))
-            {
-                count++;
-                if (c == '\\')
-                {
-                    flag = false;
-                }
-                else
-                {
-                    if (c == '\'' && flag)
-                    {
-                        return 0;
-                    }
-                    flag = true;
-                }
-            }
-
-            return count;
-        }
-
         private static int MatchStringConst(string lineRemain)
         {
             if (lineRemain.First() != '"')
@@ -436,27 +428,6 @@ namespace SharpCCompiler
             }
 
             return count;
-        }
-
-        public static void Test()
-        {
-            Console.WriteLine("Lexical analyzer test started!");
-            string source =
-                "// This is a comment.\n" +
-                "int integer;\n" +
-                "output(\"Hello! Please enter an integer: \");\n" +
-                "input(integer);\n" +
-                "if(integer > 100)\n" +
-                "\tinteger = integer + 1;\n" +
-                "else\n" +
-                "\tinteger = integer - 1;\n" +
-                "output(\"The result of this integer plus 1 is: \");\n" +
-                "output(integer);\n" +
-                "output(\".\\n\");\n";
-            Console.WriteLine("Source code is:");
-            Console.WriteLine(source);
-            LexAnalyzer lexAnalyzer = new LexAnalyzer(source);
-            Console.WriteLine("Lexical analyzer test finished!");
         }
     }
 }
