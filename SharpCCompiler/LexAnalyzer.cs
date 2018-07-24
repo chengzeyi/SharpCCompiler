@@ -38,12 +38,19 @@ namespace SharpCCompiler
             string source =
                 "// This is a comment.\n" +
                 "int integer;\n" +
+                "int count;\n" +
+                "count = 10;\n" +
                 "output(\"Hello! Please enter an integer: \");\n" +
                 "input(integer);\n" +
                 "if(integer > 100)\n" +
                 "\tinteger = integer + 1;\n" +
                 "else\n" +
                 "\tinteger = integer - 1;\n" +
+                "while(count > 0)\n" +
+                "{\n" +
+                "\tinteger = integer + 2;\n" +
+                "\tcount = count - 1;\n" +
+                "}\n" +
                 "output(\"The result is: \");\n" +
                 "output(integer);\n" +
                 "output(\".\\n\");\n";
@@ -83,11 +90,13 @@ namespace SharpCCompiler
             MatchList.Add(new Tuple<Match, string>(MatchSingleLineComment, SymbolType.SingleLineComment));
             MatchList.Add(new Tuple<Match, string>(MatchKeyword, SymbolType.Keyword));
             MatchList.Add(new Tuple<Match, string>(MatchIdentifier, SymbolType.Identifier));
-            MatchList.Add(new Tuple<Match, string>(MatchStringConst, SymbolType.StringConst));
             MatchList.Add(new Tuple<Match, string>(MatchIntConst, SymbolType.IntConst));
+            MatchList.Add(new Tuple<Match, string>(MatchStringConst, SymbolType.StringConst));
+//            MatchList.Add(new Tuple<Match, string>(MatchCharConst, SymbolType.CharConst));
             MatchList.Add(new Tuple<Match, string>(MatchBoundary, SymbolType.Boundary));
             MatchList.Add(new Tuple<Match, string>(MatchOperator, SymbolType.Operator));
             MatchList.Add(new Tuple<Match, string>(MatchIncomStringConst, SymbolType.IncomStringConst));
+//            MatchList.Add(new Tuple<Match, string>(MatchIncomCharConst, SymbolType.IncomCharConst));
         }
 
         public LexAnalyzer(string source)
@@ -140,6 +149,10 @@ namespace SharpCCompiler
                     {
                         value = ParseStringConst(word.Value, word.Line);
                     }
+//                    else if (word.Type.Equals(SymbolType.CharConst))
+//                    {
+//                        value = ParseCharConst(word.Value, word.Line);
+//                    }
                     else
                     {
                         value = word.Value;
@@ -165,7 +178,7 @@ namespace SharpCCompiler
                 return value;
             }
 
-            throw new LexAnalyzerError(line, LexAnalyzerError.IntConst, value);
+            throw new LexAnalyzerError(line, LexAnalyzerError.InvalidIntConst, value);
         }
 
         private static string ParseStringConst(string value, int line)
@@ -190,7 +203,7 @@ namespace SharpCCompiler
                             case 'n': charToAdd = '\n'; break;
                             case 'r': charToAdd = '\r'; break;
                             case 'b': charToAdd = '\b'; break;
-                            default: throw new LexAnalyzerError(line, LexAnalyzerError.StringConst, value);
+                            default: throw new LexAnalyzerError(line, LexAnalyzerError.InvalidStringConst, value);
                         }
                     }
                     else

@@ -21,7 +21,7 @@ namespace SharpCCompiler
             Console.WriteLine("Started to print token list!");
             foreach (var token in tokenList)
             {
-                Console.WriteLine("Line: {0}, type: {1}, raw: {2}", token.Line, token.Type, token.Raw);
+                Console.WriteLine("Line: {0}, Type: {1}, Raw: {2}", token.Line, token.Type, token.Raw);
 
             }
             Console.WriteLine("Finished printing token list!");

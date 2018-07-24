@@ -7,10 +7,12 @@ namespace SharpCCompiler
     class LexAnalyzerError : Exception
     {
         public static readonly string IncomStringConst = "incomplete string constant";
+//        public static readonly string IncomCharConst = "incomplete character constant";
         public static readonly string Unknown = "unknown type";
 
-        public static readonly string IntConst = "invalid integer constant";
-        public static readonly string StringConst = "invalid string constant";
+        public static readonly string InvalidIntConst = "invalid integer constant";
+        public static readonly string InvalidStringConst = "invalid string constant";
+//        public static readonly string InvalidCharConst = "invalid character constant";
 
         private readonly int line;
         private readonly string info;

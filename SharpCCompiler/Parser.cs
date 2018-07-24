@@ -19,12 +19,19 @@ namespace SharpCCompiler
             string source =
                 "// This is a comment.\n" +
                 "int integer;\n" +
+                "int count;\n" +
+                "count = 10;\n" +
                 "output(\"Hello! Please enter an integer: \");\n" +
                 "input(integer);\n" +
                 "if(integer > 100)\n" +
                 "\tinteger = integer + 1;\n" +
                 "else\n" +
                 "\tinteger = integer - 1;\n" +
+                "while(count > 0)\n" +
+                "{\n" +
+                "\tinteger = integer + 2;\n" +
+                "\tcount = count - 1;\n" +
+                "}\n" +
                 "output(\"The result is: \");\n" +
                 "output(integer);\n" +
                 "output(\".\\n\");\n";
@@ -74,12 +81,12 @@ namespace SharpCCompiler
             }
         }
 
-        private bool JudgeAndAssign(out SyntaxTreeNode destination, SyntaxTreeNode source)
+        private static bool JudgeAndAssign(out SyntaxTreeNode destination, SyntaxTreeNode source)
         {
             return (destination = source) != null;
         }
 
-        private bool MatchLeftBrace(ref List<Token>.Enumerator enumerator)
+        private static bool MatchLeftBrace(ref List<Token>.Enumerator enumerator)
         {
             List<Token>.Enumerator initialEnumerator = enumerator;
             if (enumerator.MoveNext() && enumerator.Current.Type.Equals(SymbolType.Boundary) && enumerator.Current.Value.Equals("{"))
@@ -93,7 +100,7 @@ namespace SharpCCompiler
             }
         }
 
-        private bool MatchRightBrace(ref List<Token>.Enumerator enumerator)
+        private static bool MatchRightBrace(ref List<Token>.Enumerator enumerator)
         {
             List<Token>.Enumerator initialEnumerator = enumerator;
             if (enumerator.MoveNext() && enumerator.Current.Type.Equals(SymbolType.Boundary) && enumerator.Current.Value.Equals("}"))
@@ -107,7 +114,7 @@ namespace SharpCCompiler
             }
         }
 
-        private bool MatchLeftParenthese(ref List<Token>.Enumerator enumerator)
+        private static bool MatchLeftParenthese(ref List<Token>.Enumerator enumerator)
         {
             List<Token>.Enumerator initialEnumerator = enumerator;
             if (enumerator.MoveNext() && enumerator.Current.Type.Equals(SymbolType.Boundary) && enumerator.Current.Value.Equals("("))
@@ -121,7 +128,7 @@ namespace SharpCCompiler
             }
         }
 
-        private bool MatchRightParenthese(ref List<Token>.Enumerator enumerator)
+        private static bool MatchRightParenthese(ref List<Token>.Enumerator enumerator)
         {
             List<Token>.Enumerator initialEnumerator = enumerator;
             if (enumerator.MoveNext() && enumerator.Current.Type.Equals(SymbolType.Boundary) && enumerator.Current.Value.Equals(")"))
@@ -135,7 +142,7 @@ namespace SharpCCompiler
             }
         }
 
-        private bool MatchSemicolon(ref List<Token>.Enumerator enumerator)
+        private static bool MatchSemicolon(ref List<Token>.Enumerator enumerator)
         {
             List<Token>.Enumerator initialEnumerator = enumerator;
             if (enumerator.MoveNext() && enumerator.Current.Type.Equals(SymbolType.Boundary) && enumerator.Current.Value.Equals(";"))
@@ -149,7 +156,7 @@ namespace SharpCCompiler
             }
         }
 
-        private bool MatchIf(ref List<Token>.Enumerator enumerator)
+        private static bool MatchIf(ref List<Token>.Enumerator enumerator)
         {
             List<Token>.Enumerator initialEnumerator = enumerator;
             if (enumerator.MoveNext() && enumerator.Current.Type.Equals(SymbolType.Keyword) && enumerator.Current.Value.Equals("if"))
@@ -163,7 +170,7 @@ namespace SharpCCompiler
             }
         }
 
-        private bool MatchElse(ref List<Token>.Enumerator enumerator)
+        private static bool MatchElse(ref List<Token>.Enumerator enumerator)
         {
             List<Token>.Enumerator initialEnumerator = enumerator;
             if (enumerator.MoveNext() && enumerator.Current.Type.Equals(SymbolType.Keyword) && enumerator.Current.Value.Equals("else"))
@@ -177,7 +184,7 @@ namespace SharpCCompiler
             }
         }
 
-        private bool MatchWhile(ref List<Token>.Enumerator enumerator)
+        private static bool MatchWhile(ref List<Token>.Enumerator enumerator)
         {
             List<Token>.Enumerator initialEnumerator = enumerator;
             if (enumerator.MoveNext() && enumerator.Current.Type.Equals(SymbolType.Keyword) && enumerator.Current.Value.Equals("while"))
@@ -191,7 +198,7 @@ namespace SharpCCompiler
             }
         }
 
-        private bool MatchInput(ref List<Token>.Enumerator enumerator)
+        private static bool MatchInput(ref List<Token>.Enumerator enumerator)
         {
             List<Token>.Enumerator initialEnumerator = enumerator;
             if (enumerator.MoveNext() && enumerator.Current.Type.Equals(SymbolType.Keyword) && enumerator.Current.Value.Equals("input"))
@@ -205,7 +212,7 @@ namespace SharpCCompiler
             }
         }
 
-        private bool MatchOutput(ref List<Token>.Enumerator enumerator)
+        private static bool MatchOutput(ref List<Token>.Enumerator enumerator)
         {
             List<Token>.Enumerator initialEnumerator = enumerator;
             if (enumerator.MoveNext() && enumerator.Current.Type.Equals(SymbolType.Keyword) && enumerator.Current.Value.Equals("output"))
@@ -219,7 +226,7 @@ namespace SharpCCompiler
             }
         }
 
-        private SyntaxTreeNode CreateIntSpecifier(ref List<Token>.Enumerator enumerator)
+        private static SyntaxTreeNode CreateIntSpecifier(ref List<Token>.Enumerator enumerator)
         {
             List<Token>.Enumerator initialEnumerator = enumerator;
             if (enumerator.MoveNext() && enumerator.Current.Type.Equals(SymbolType.Keyword) && enumerator.Current.Value.Equals("int"))
@@ -233,7 +240,7 @@ namespace SharpCCompiler
             }
         }
 
-        private SyntaxTreeNode CreateTypeSpecifier(ref List<Token>.Enumerator enumerator)
+        private static SyntaxTreeNode CreateTypeSpecifier(ref List<Token>.Enumerator enumerator)
         {
             List<Token>.Enumerator initialEnumerator = enumerator;
             List<SyntaxTreeNode> childList = new List<SyntaxTreeNode>();
@@ -248,7 +255,7 @@ namespace SharpCCompiler
             return null;
         }
 
-        private SyntaxTreeNode CreateIdentifier(ref List<Token>.Enumerator enumerator)
+        private static SyntaxTreeNode CreateIdentifier(ref List<Token>.Enumerator enumerator)
         {
             List<Token>.Enumerator initialEnumerator = enumerator;
             if (enumerator.MoveNext() && enumerator.Current.Type.Equals(SymbolType.Identifier))
@@ -262,7 +269,7 @@ namespace SharpCCompiler
             }
         }
 
-        private SyntaxTreeNode CreateIntConst(ref List<Token>.Enumerator enumerator)
+        private static SyntaxTreeNode CreateIntConst(ref List<Token>.Enumerator enumerator)
         {
             List<Token>.Enumerator initialEnumerator = enumerator;
             if (enumerator.MoveNext() && enumerator.Current.Type.Equals(SymbolType.IntConst))
@@ -276,7 +283,7 @@ namespace SharpCCompiler
             }
         }
 
-        private SyntaxTreeNode CreateStringConst(ref List<Token>.Enumerator enumerator)
+        private static SyntaxTreeNode CreateStringConst(ref List<Token>.Enumerator enumerator)
         {
             List<Token>.Enumerator initialEnumerator = enumerator;
             if (enumerator.MoveNext() && enumerator.Current.Type.Equals(SymbolType.StringConst))
@@ -290,7 +297,7 @@ namespace SharpCCompiler
             }
         }
 
-        private SyntaxTreeNode CreateAssignmentOperator(ref List<Token>.Enumerator enumerator)
+        private static SyntaxTreeNode CreateAssignmentOperator(ref List<Token>.Enumerator enumerator)
         {
             List<Token>.Enumerator initialEnumerator = enumerator;
             if (enumerator.MoveNext() && enumerator.Current.Type.Equals(SymbolType.Operator) && enumerator.Current.Value.Equals("="))
@@ -304,7 +311,7 @@ namespace SharpCCompiler
             }
         }
 
-        private SyntaxTreeNode CreateAddOperator(ref List<Token>.Enumerator enumerator)
+        private static SyntaxTreeNode CreateAddOperator(ref List<Token>.Enumerator enumerator)
         {
             List<Token>.Enumerator initialEnumerator = enumerator;
             if (enumerator.MoveNext() && enumerator.Current.Type.Equals(SymbolType.Operator) && enumerator.Current.Value.Equals("+"))
@@ -318,7 +325,7 @@ namespace SharpCCompiler
             }
         }
 
-        private SyntaxTreeNode CreateSubtractionOperator(ref List<Token>.Enumerator enumerator)
+        private static SyntaxTreeNode CreateSubtractionOperator(ref List<Token>.Enumerator enumerator)
         {
             List<Token>.Enumerator initialEnumerator = enumerator;
             if (enumerator.MoveNext() && enumerator.Current.Type.Equals(SymbolType.Operator))
@@ -332,7 +339,7 @@ namespace SharpCCompiler
             }
         }
 
-        private SyntaxTreeNode CreateLessThanOperator(ref List<Token>.Enumerator enumerator)
+        private static SyntaxTreeNode CreateLessThanOperator(ref List<Token>.Enumerator enumerator)
         {
             List<Token>.Enumerator initialEnumerator = enumerator;
             if (enumerator.MoveNext() && enumerator.Current.Type.Equals(SymbolType.Operator))
@@ -346,7 +353,7 @@ namespace SharpCCompiler
             }
         }
 
-        private SyntaxTreeNode CreateGreaterThanOperator(ref List<Token>.Enumerator enumerator)
+        private static SyntaxTreeNode CreateGreaterThanOperator(ref List<Token>.Enumerator enumerator)
         {
             List<Token>.Enumerator initialEnumerator = enumerator;
             if (enumerator.MoveNext() && enumerator.Current.Type.Equals(SymbolType.Operator))
@@ -360,7 +367,7 @@ namespace SharpCCompiler
             }
         }
 
-        private SyntaxTreeNode CreateEqualOperator(ref List<Token>.Enumerator enumerator)
+        private static SyntaxTreeNode CreateEqualOperator(ref List<Token>.Enumerator enumerator)
         {
             List<Token>.Enumerator initialEnumerator = enumerator;
             if (enumerator.MoveNext() && enumerator.Current.Type.Equals(SymbolType.Operator))
@@ -374,7 +381,7 @@ namespace SharpCCompiler
             }
         }
 
-        private SyntaxTreeNode CreateNotEqualOperator(ref List<Token>.Enumerator enumerator)
+        private static SyntaxTreeNode CreateNotEqualOperator(ref List<Token>.Enumerator enumerator)
         {
             List<Token>.Enumerator initialEnumerator = enumerator;
             if (enumerator.MoveNext() && enumerator.Current.Type.Equals(SymbolType.Operator))
@@ -388,7 +395,7 @@ namespace SharpCCompiler
             }
         }
 
-        private SyntaxTreeNode CreateAddExpression(ref List<Token>.Enumerator enumerator)
+        private static SyntaxTreeNode CreateAddExpression(ref List<Token>.Enumerator enumerator)
         {
             List<Token>.Enumerator initialEnumerator = enumerator;
             List<SyntaxTreeNode> childList = new List<SyntaxTreeNode>();
@@ -411,7 +418,7 @@ namespace SharpCCompiler
             return null;
         }
 
-        private SyntaxTreeNode CreateSubtractionExpression(ref List<Token>.Enumerator enumerator)
+        private static SyntaxTreeNode CreateSubtractionExpression(ref List<Token>.Enumerator enumerator)
         {
             List<Token>.Enumerator initialEnumerator = enumerator;
             List<SyntaxTreeNode> childList = new List<SyntaxTreeNode>();
@@ -434,7 +441,7 @@ namespace SharpCCompiler
             return null;
         }
 
-        private SyntaxTreeNode CreateLessThanExpression(ref List<Token>.Enumerator enumerator)
+        private static SyntaxTreeNode CreateLessThanExpression(ref List<Token>.Enumerator enumerator)
         {
             List<Token>.Enumerator initialEnumerator = enumerator;
             List<SyntaxTreeNode> childList = new List<SyntaxTreeNode>();
@@ -457,7 +464,7 @@ namespace SharpCCompiler
             return null;
         }
 
-        private SyntaxTreeNode CreateGreaterThanExpression(ref List<Token>.Enumerator enumerator)
+        private static SyntaxTreeNode CreateGreaterThanExpression(ref List<Token>.Enumerator enumerator)
         {
             List<Token>.Enumerator initialEnumerator = enumerator;
             List<SyntaxTreeNode> childList = new List<SyntaxTreeNode>();
@@ -480,7 +487,7 @@ namespace SharpCCompiler
             return null;
         }
 
-        private SyntaxTreeNode CreateEqualExpression(ref List<Token>.Enumerator enumerator)
+        private static SyntaxTreeNode CreateEqualExpression(ref List<Token>.Enumerator enumerator)
         {
             List<Token>.Enumerator initialEnumerator = enumerator;
             List<SyntaxTreeNode> childList = new List<SyntaxTreeNode>();
@@ -503,7 +510,7 @@ namespace SharpCCompiler
             return null;
         }
 
-        private SyntaxTreeNode CreateNotEqualExpression(ref List<Token>.Enumerator enumerator)
+        private static SyntaxTreeNode CreateNotEqualExpression(ref List<Token>.Enumerator enumerator)
         {
             List<Token>.Enumerator initialEnumerator = enumerator;
             List<SyntaxTreeNode> childList = new List<SyntaxTreeNode>();
@@ -526,7 +533,7 @@ namespace SharpCCompiler
             return null;
         }
 
-        private SyntaxTreeNode CreateAssignmentExpression(ref List<Token>.Enumerator enumerator)
+        private static SyntaxTreeNode CreateAssignmentExpression(ref List<Token>.Enumerator enumerator)
         {
             List<Token>.Enumerator initialEnumerator = enumerator;
             List<SyntaxTreeNode> childList = new List<SyntaxTreeNode>();
@@ -549,7 +556,7 @@ namespace SharpCCompiler
             return null;
         }
 
-        private SyntaxTreeNode CreateExpression(ref List<Token>.Enumerator enumerator)
+        private static SyntaxTreeNode CreateExpression(ref List<Token>.Enumerator enumerator)
         {
             List<Token>.Enumerator initialEnumerator = enumerator;
             List<SyntaxTreeNode> childList = new List<SyntaxTreeNode>();
@@ -564,7 +571,7 @@ namespace SharpCCompiler
             return null;
         }
 
-        private SyntaxTreeNode CreateVariableDeclaration(ref List<Token>.Enumerator enumerator)
+        private static SyntaxTreeNode CreateVariableDeclaration(ref List<Token>.Enumerator enumerator)
         {
             List<Token>.Enumerator initialEnumerator = enumerator;
             List<SyntaxTreeNode> childList = new List<SyntaxTreeNode>();
@@ -583,7 +590,7 @@ namespace SharpCCompiler
             return null;
         }
 
-        private SyntaxTreeNode CreateDeclaration(ref List<Token>.Enumerator enumerator)
+        private static SyntaxTreeNode CreateDeclaration(ref List<Token>.Enumerator enumerator)
         {
             List<Token>.Enumerator initialEnumerator = enumerator;
             List<SyntaxTreeNode> childList = new List<SyntaxTreeNode>();
@@ -598,7 +605,7 @@ namespace SharpCCompiler
             return null;
         }
 
-        private SyntaxTreeNode CreateExpressionStatement(ref List<Token>.Enumerator enumerator)
+        private static SyntaxTreeNode CreateExpressionStatement(ref List<Token>.Enumerator enumerator)
         {
             List<Token>.Enumerator initialEnumerator = enumerator;
             List<SyntaxTreeNode> childList = new List<SyntaxTreeNode>();
@@ -616,7 +623,7 @@ namespace SharpCCompiler
             return null;
         }
 
-        private SyntaxTreeNode CreateNullStatement(ref List<Token>.Enumerator enumerator)
+        private static SyntaxTreeNode CreateNullStatement(ref List<Token>.Enumerator enumerator)
         {
             List<Token>.Enumerator initialEnumerator = enumerator;
             List<SyntaxTreeNode> childList = new List<SyntaxTreeNode>();
@@ -629,7 +636,7 @@ namespace SharpCCompiler
             return null;
         }
 
-        private SyntaxTreeNode CreateIfStatement(ref List<Token>.Enumerator enumerator)
+        private static SyntaxTreeNode CreateIfStatement(ref List<Token>.Enumerator enumerator)
         {
             List<Token>.Enumerator initialEnumerator = enumerator;
             List<SyntaxTreeNode> childList = new List<SyntaxTreeNode>();
@@ -680,7 +687,7 @@ namespace SharpCCompiler
             return null;
         }
 
-        private SyntaxTreeNode CreateWhileStatement(ref List<Token>.Enumerator enumerator)
+        private static SyntaxTreeNode CreateWhileStatement(ref List<Token>.Enumerator enumerator)
         {
             List<Token>.Enumerator initialEnumerator = enumerator;
             List<SyntaxTreeNode> childList = new List<SyntaxTreeNode>();
@@ -709,7 +716,7 @@ namespace SharpCCompiler
             return null;
         }
 
-        private SyntaxTreeNode CreateInputStatement(ref List<Token>.Enumerator enumerator)
+        private static SyntaxTreeNode CreateInputStatement(ref List<Token>.Enumerator enumerator)
         {
             List<Token>.Enumerator initialEnumerator = enumerator;
             List<SyntaxTreeNode> childList = new List<SyntaxTreeNode>();
@@ -737,7 +744,7 @@ namespace SharpCCompiler
             return null;
         }
 
-        private SyntaxTreeNode CreateOutputStatement(ref List<Token>.Enumerator enumerator)
+        private static SyntaxTreeNode CreateOutputStatement(ref List<Token>.Enumerator enumerator)
         {
             List<Token>.Enumerator initialEnumerator = enumerator;
             List<SyntaxTreeNode> childList = new List<SyntaxTreeNode>();
@@ -765,7 +772,7 @@ namespace SharpCCompiler
             return null;
         }
 
-        private SyntaxTreeNode CreateDeclarationStatement(ref List<Token>.Enumerator enumerator)
+        private static SyntaxTreeNode CreateDeclarationStatement(ref List<Token>.Enumerator enumerator)
         {
             List<Token>.Enumerator initialEnumerator = enumerator;
             List<SyntaxTreeNode> childList = new List<SyntaxTreeNode>();
@@ -783,7 +790,7 @@ namespace SharpCCompiler
             return null;
         }
 
-        private SyntaxTreeNode CreateStatement(ref List<Token>.Enumerator enumerator)
+        private static SyntaxTreeNode CreateStatement(ref List<Token>.Enumerator enumerator)
         {
             List<Token>.Enumerator initialEnumerator = enumerator;
             List<SyntaxTreeNode> childList = new List<SyntaxTreeNode>();
@@ -798,7 +805,7 @@ namespace SharpCCompiler
             return null;
         }
 
-        private SyntaxTreeNode CreateCompoundStatement(ref List<Token>.Enumerator enumerator)
+        private static SyntaxTreeNode CreateCompoundStatement(ref List<Token>.Enumerator enumerator)
         {
             List<Token>.Enumerator initialEnumerator = enumerator;
             List<SyntaxTreeNode> childList = new List<SyntaxTreeNode>();
@@ -821,7 +828,7 @@ namespace SharpCCompiler
             return null;
         }
 
-        private SyntaxTreeNode CreateProgram(ref List<Token>.Enumerator enumerator)
+        private static SyntaxTreeNode CreateProgram(ref List<Token>.Enumerator enumerator)
         {
             List<Token>.Enumerator initialEnumerator = enumerator;
             List<SyntaxTreeNode> childList = new List<SyntaxTreeNode>();
@@ -843,5 +850,86 @@ namespace SharpCCompiler
                 return new SyntaxTreeNode(tmpEnumerator.Current.Line, SyntaxType.Program){ChildList = childList};
             }
         }
+
+/*        private static string ParseCharConst(string value, int line)
+        {
+            if (value.Length == 3)
+            {
+                return value[1].ToString();
+            }
+            else if (value.Length == 4 && value[1] == '\\')
+            {
+                switch (value[2])
+                {
+                    case '\'': return "\'";
+                    case 't': return "\t";
+                    case 'n': return "\n";
+                    case 'r': return "\r";
+                    case 'b': return "\b";
+                }
+            }
+
+            throw new LexAnalyzerError(line, LexAnalyzerError.CharConst, value);
+        }
+
+        private static int MatchCharConst(string lineRemain)
+        {
+            if (lineRemain.First() != '\'')
+            {
+                return 0;
+            }
+
+            int count = 1;
+            bool flag = true;
+            foreach (var c in lineRemain.Substring(1))
+            {
+                count++;
+                if (c == '\\')
+                {
+                    flag = false;
+                }
+                else
+                {
+                    if (c == '\'' && flag)
+                    {
+                        return count;
+                    }
+
+                    flag = true;
+                }
+            }
+
+            return 0;
+        }
+
+        private static int MatchIncomCharConstant(string lineRemain)
+        {
+            if (lineRemain.First() != '\'')
+            {
+                return 0;
+            }
+
+            int count = 1;
+            bool flag = true;
+            foreach (var c in lineRemain.Substring(1))
+            {
+                count++;
+                if (c == '\\')
+                {
+                    flag = false;
+                }
+                else
+                {
+                    if (c == '\'' && flag)
+                    {
+                        return 0;
+                    }
+
+                    flag = true;
+                }
+            }
+
+            return count;
+        }*/
     }
 }
