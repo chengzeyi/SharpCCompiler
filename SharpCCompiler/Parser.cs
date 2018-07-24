@@ -21,7 +21,7 @@ namespace SharpCCompiler
                 "int integer;\n" +
                 "int count;\n" +
                 "count = 10;\n" +
-                "output(\"Hello! Please enter an integer: \");\n" +
+                "output(\"Hello! Please enter an integer:\n\");\n" +
                 "input(integer);\n" +
                 "if(integer > 100)\n" +
                 "\tinteger = integer + 1;\n" +

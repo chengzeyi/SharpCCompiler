@@ -5,7 +5,7 @@
 int integer;
 int count;
 count = 10;
-output(\"Hello! Please enter an integer: \");
+output("Hello! Please enter an integer:\n");
 input(integer);
 if(integer > 100)
 	tinteger = integer + 1;
@@ -16,7 +16,7 @@ while(count > 0)
 	integer = integer + 2;
 	count = count - 1;
 }
-output(\"The result is: \");
+output("The result is: ");
 output(integer);
-output(\".\\n\");
+output(".\n");
 ```
