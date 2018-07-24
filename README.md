@@ -1,5 +1,5 @@
-#简单编译器
-##支持代码示例
+# 简单编译器
+## 支持代码示例
 ```
 // This is a comment.
 int integer;
@@ -9,7 +9,7 @@ output(\"Hello! Please enter an integer: \");
 input(integer);
 if(integer > 100)
 	tinteger = integer + 1;
-else\n" +
+else
 	tinteger = integer - 1;
 while(count > 0)
 {
