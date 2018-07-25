@@ -41,7 +41,7 @@ namespace SharpCCompiler
         {
             for (int i = 0; i < tabCount; i++)
             {
-                Console.Write('\t');
+                Console.Write("    ");
             }
             Console.WriteLine("{0}", root.Type);
             if (root.ChildList != null)

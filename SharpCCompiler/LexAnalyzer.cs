@@ -32,34 +32,6 @@ namespace SharpCCompiler
 
         public bool HasError => hasError;
 
-        public static void Test()
-        {
-            Console.WriteLine("Lexical analyzer test started!");
-            string source =
-                "// This is a comment.\n" +
-                "int integer;\n" +
-                "int count;\n" +
-                "count = 10;\n" +
-                "output(\"Hello! Please enter an integer:\n\");\n" +
-                "input(integer);\n" +
-                "if(integer > 100)\n" +
-                "\tinteger = integer + 1;\n" +
-                "else\n" +
-                "\tinteger = integer - 1;\n" +
-                "while(count > 0)\n" +
-                "{\n" +
-                "\tinteger = integer + 2;\n" +
-                "\tcount = count - 1;\n" +
-                "}\n" +
-                "output(\"The result is: \");\n" +
-                "output(integer);\n" +
-                "output(\".\\n\");\n";
-            Console.WriteLine("Source code is:");
-            Console.WriteLine(source);
-            LexAnalyzer lexAnalyzer = new LexAnalyzer(source);
-            Console.WriteLine("Lexical analyzer test finished!");
-        }
-
         static LexAnalyzer()
         {
             KeywordList.Add("int");
@@ -112,20 +84,21 @@ namespace SharpCCompiler
 
             ParseWordList();
             Console.WriteLine("Finished analyzing!");
-            if (lexAnalyzerErrorCount > 0)
+            if (hasError)
             {
-                hasError = true;
                 Printer.PrintLexAnalyzerErrorList(lexAnalyzerErrorList);
             }
-
-            if (wordCount > 0)
+            else
             {
-                Printer.PrintWordList(wordList);
-            }
+                if (wordCount > 0)
+                {
+                    Printer.PrintWordList(wordList);
+                }
 
-            if (tokenCount > 0)
-            {
-                Printer.PrintTokenList(tokenList);
+                if (tokenCount > 0)
+                {
+                    Printer.PrintTokenList(tokenList);
+                }
             }
         }
 
@@ -242,6 +215,8 @@ namespace SharpCCompiler
                 }
                 catch (LexAnalyzerError e)
                 {
+                    hasError = true;
+                    lexAnalyzerErrorCount++;
                     lexAnalyzerErrorList.Add(e);
                     isValid = false;
                 }
@@ -442,5 +417,86 @@ namespace SharpCCompiler
 
             return count;
         }
+
+        /*        private static string ParseCharConst(string value, int line)
+        {
+            if (value.Length == 3)
+            {
+                return value[1].ToString();
+            }
+            else if (value.Length == 4 && value[1] == '\\')
+            {
+                switch (value[2])
+                {
+                    case '\'': return "\'";
+                    case 't': return "\t";
+                    case 'n': return "\n";
+                    case 'r': return "\r";
+                    case 'b': return "\b";
+                }
+            }
+
+            throw new LexAnalyzerError(line, LexAnalyzerError.CharConst, value);
+        }
+
+        private static int MatchCharConst(string lineRemain)
+        {
+            if (lineRemain.First() != '\'')
+            {
+                return 0;
+            }
+
+            int count = 1;
+            bool flag = true;
+            foreach (var c in lineRemain.Substring(1))
+            {
+                count++;
+                if (c == '\\')
+                {
+                    flag = false;
+                }
+                else
+                {
+                    if (c == '\'' && flag)
+                    {
+                        return count;
+                    }
+
+                    flag = true;
+                }
+            }
+
+            return 0;
+        }
+
+        private static int MatchIncomCharConstant(string lineRemain)
+        {
+            if (lineRemain.First() != '\'')
+            {
+                return 0;
+            }
+
+            int count = 1;
+            bool flag = true;
+            foreach (var c in lineRemain.Substring(1))
+            {
+                count++;
+                if (c == '\\')
+                {
+                    flag = false;
+                }
+                else
+                {
+                    if (c == '\'' && flag)
+                    {
+                        return 0;
+                    }
+
+                    flag = true;
+                }
+            }
+
+            return count;
+        }*/
     }
 }

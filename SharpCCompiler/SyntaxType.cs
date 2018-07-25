@@ -38,11 +38,12 @@ namespace SharpCCompiler
         public static readonly string EqualOperator = "equal operator";
         public static readonly string NotEqualOperator = "not equal operator";
 
+        public static readonly string Operand = "operand";
         public static readonly string IntConst = "integer constant";
         public static readonly string StringConst = "string constant";
         public static readonly string Identifier = "identifier";
-        public static readonly string TypeSpecifier = "type specifier";
 
+        public static readonly string TypeSpecifier = "type specifier";
         public static readonly string IntSpecifier = "integer specifier";
     }
 }
